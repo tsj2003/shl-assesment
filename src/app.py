@@ -59,6 +59,22 @@ def load_recommender():
 st.title("🧩 SHL Assessment Recommender")
 st.markdown("Enter a role, job description, or skill to find the best SHL assessments.")
 
+# Debug Info
+import os
+with st.expander("System Status (Debug)"):
+    st.write(f"CWD: {os.getcwd()}")
+    st.write(f"Data Dir Exists: {os.path.exists('data/raw')}")
+    st.write(f"Index Dir Exists: {os.path.exists('data/processed')}")
+    if os.path.exists('data/raw/assessments.json'):
+        st.write(f"JSON Size: {os.path.getsize('data/raw/assessments.json')} bytes")
+    else:
+        st.error("assessments.json NOT FOUND")
+    
+    if os.path.exists('data/processed/assessments.index'):
+        st.write(f"Index Size: {os.path.getsize('data/processed/assessments.index')} bytes")
+    else:
+        st.error("assessments.index NOT FOUND")
+
 # Sidebar
 with st.sidebar:
     st.header("About")
