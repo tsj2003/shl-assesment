@@ -8,3 +8,6 @@ sentence-transformers
 faiss-cpu
 numpy
 pydantic
+streamlit
+fastapi
+uvicorn
