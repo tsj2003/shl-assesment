@@ -9,8 +9,14 @@ import faiss
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-DATA_DIR = "data/raw"
-PROCESSED_DIR = "data/processed"
+# Robust Pathing
+# src/embeddings.py is in src/, so project root is one level up
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
+
+DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
+PROCESSED_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
+
 INPUT_FILE = os.path.join(DATA_DIR, "assessments.json")
 INDEX_FILE = os.path.join(PROCESSED_DIR, "assessments.index")
 MAPPING_FILE = os.path.join(PROCESSED_DIR, "mapping.pkl")
@@ -101,7 +107,14 @@ class EmbeddingEngine:
 
     def search(self, query, k=10):
         if not self.index:
-            self.load_index() # Attempt lazy load
+            loaded = self.load_index()
+            if not loaded:
+                logging.info("Index load failed. Attempting to create new index...")
+                if self.load_data():
+                    self.create_index()
+                else:
+                    logging.error("Failed to load data for indexing.")
+                    return []
         
         if not self.index:
             return []
